@@ -15,6 +15,7 @@ class Messages:
     SUCCESS = 'Успешное создание ссылки'
     INCORRECT_NAME = 'Указано недопустимое имя для короткой ссылки'
 
+
 def randomize_url():
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(6))
