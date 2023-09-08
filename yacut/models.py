@@ -11,6 +11,4 @@ class URLMap(db.Model):
 
     @property
     def to_dict(self):
-        return dict(
-            url=self.original,
-        )
+        return dict(url=self.original)
