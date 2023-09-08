@@ -10,7 +10,6 @@ from .utils import generate_unique_url, validate_custom_id
 def get_original(short_id):
     model = URLMap.query.filter_by(short=short_id).first()
     if model is None:
-        # Тут код ответа нужно указать явным образом
         raise InvalidAPIUsage('Указанный id не найден', 404)
     return jsonify(model.to_dict), 200
 

@@ -13,7 +13,7 @@ class Messages:
     REPEATED_URL = 'Имя {short_name} уже занято!'
     REPEATED_URL_2 = 'Имя "{short_name}" уже занято.'
     SUCCESS = 'Успешное создание ссылки'
-
+    INCORRECT_NAME = 'Указано недопустимое имя для короткой ссылки'
 
 def randomize_url():
     characters = string.ascii_letters + string.digits
@@ -67,12 +67,18 @@ def flash_success_message(short_url):
 
 
 def does_short_url_correct(url):
+    """
+    Проверяет корректность короткой ссылки.
+    """
     pattern = re.compile(r'^[A-Za-z0-9]+$')
     return bool(pattern.match(url))
 
 
 def validate_custom_id(custom_id):
+    """
+    Проверяет корректность короткой ссылки для добавления в БД.
+    """
     if (custom_id and len(custom_id) > 16) or (custom_id and not does_short_url_correct(custom_id)):
-        raise InvalidAPIUsage('Указано недопустимое имя для короткой ссылки')
+        raise InvalidAPIUsage(Messages.INCORRECT_NAME)
     if URLMap.query.filter_by(short=custom_id).first() is not None:
         raise InvalidAPIUsage(Messages.REPEATED_URL_2.format(short_name=custom_id))
