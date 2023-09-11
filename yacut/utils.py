@@ -6,7 +6,6 @@ from flask import flash, request
 
 from . import db
 from .error_handlers import InvalidAPIUsage
-from .models import URLMap
 
 
 class Messages:
@@ -26,29 +25,29 @@ def randomize_url():
     return ''.join(random.choice(characters) for _ in range(6))
 
 
-def is_custom_url_exists(custom_url):
+def is_custom_url_exists(custom_url, model):
     """
     Проверяет, существует ли пользовательский URL в базе данных.
     """
-    return URLMap.query.filter_by(short=custom_url).first() is not None
+    return model.query.filter_by(short=custom_url).first() is not None
 
 
-def generate_unique_url():
+def generate_unique_url(model):
     """
     Генерирует уникальный пользовательский URL.
     """
     custom_url = randomize_url()
     # `randomize_url()` вывел повторяющийся `custom_url`
-    while is_custom_url_exists(custom_url):
+    while is_custom_url_exists(custom_url, model):
         custom_url = randomize_url()
     return custom_url
 
 
-def create_new_url_map(original_link, short_url):
+def create_new_url_map(original_link, short_url, model):
     """
-    Создает новую запись URLMap в базе данных.
+    Создает новую запись модели (URLMap) в базе данных.
     """
-    new_model = URLMap(
+    new_model = model(
         original=original_link,
         short=short_url,
     )
@@ -80,11 +79,11 @@ def does_short_url_correct(url):
     return bool(pattern.match(url))
 
 
-def validate_custom_id(custom_id):
+def validate_custom_id(custom_id, model):
     """
     Проверяет корректность короткой ссылки для добавления в БД.
     """
     if custom_id and (len(custom_id) > Constants.MAX_URL_LENGHT or not does_short_url_correct(custom_id)):
         raise InvalidAPIUsage(Messages.INCORRECT_NAME)
-    if URLMap.query.filter_by(short=custom_id).first() is not None:
+    if model.query.filter_by(short=custom_id).first() is not None:
         raise InvalidAPIUsage(Messages.REPEATED_URL_2.format(short_name=custom_id))

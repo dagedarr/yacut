@@ -25,11 +25,11 @@ def add_url_map():
     if 'url' not in data:
         raise InvalidAPIUsage('\"url\" является обязательным полем!')
 
-    validate_custom_id(data.get('custom_id'))
+    validate_custom_id(data.get('custom_id'), URLMap)
 
     new_model = URLMap(
         original=data.get('url'),
-        short=generate_unique_url() if
+        short=generate_unique_url(URLMap) if
         data.get('custom_id') is None else data.get('custom_id'),
     )
     db.session.add(new_model)
